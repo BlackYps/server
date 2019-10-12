@@ -967,7 +967,8 @@ class LobbyConnection():
             result = await conn.execute(
                 select([ban.c.reason, ban.c.expires_at]).where(
                     ban.c.player_id == self.player.id and ban.c.expires_at < now
-                ))
+                )
+            )
 
             data = await result.fetchone()
             if data is None:
