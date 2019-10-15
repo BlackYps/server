@@ -10,8 +10,7 @@ from sqlalchemy import and_, select
 
 from .db.models import (
     avatars, avatars_list, clan, clan_membership, global_rating,
-    ladder1v1_rating, login
-)
+    ladder1v1_rating, login, ladder1v1_leagues)
 
 
 @with_logger
@@ -66,11 +65,15 @@ class PlayerService:
                 ladder1v1_rating.c.mean,
                 ladder1v1_rating.c.deviation,
                 ladder1v1_rating.c.numGames,
+                ladder1v1_leagues.c.division,
+                ladder1v1_leagues.c.score,
+                ladder1v1_leagues.c.numGames,
                 clan.c.tag
             ], use_labels=True).select_from(
                 login
                 .join(global_rating)
                 .join(ladder1v1_rating)
+                .join(ladder1v1_leagues)
                 .outerjoin(clan_membership)
                 .outerjoin(clan)
                 .outerjoin(avatars, onclause=and_(
@@ -95,7 +98,13 @@ class PlayerService:
                 row[ladder1v1_rating.c.mean],
                 row[ladder1v1_rating.c.deviation]
             )
-            player.game_count[RatingType.LADDER_1V1] = row[ladder1v1_rating.c.numGames]
+            player.game_count[RatingType.LADDER_1V1] = row[ladder1v1_rating.c.numGames]  # not in dictionary?
+
+            player.leagues = (
+                row[ladder1v1_leagues.c.division],
+                row[ladder1v1_leagues.c.score],
+                row[ladder1v1_leagues.c.numGames]
+            )
 
             player.clan = row.get(clan.c.tag)
 

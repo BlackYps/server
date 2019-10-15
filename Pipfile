@@ -21,7 +21,8 @@ oauthlib = "*"
 sqlalchemy = "*"
 twilio = "*"
 humanize = "*"
-aiomysql = {editable = true, git = "https://github.com/aio-libs/aiomysql"}
+aiomysql = {editable = true,git = "https://github.com/aio-libs/aiomysql"}
+player = "*"
 
 [dev-packages]
 pytest = "*"

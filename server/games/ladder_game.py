@@ -2,6 +2,7 @@ import logging
 
 from server.abc.base_game import InitMode
 from server.players import Player
+from server.leagues import Leagues
 
 from .game import Game, GameOutcome, ValidityState
 from server.rating import RatingType
@@ -22,6 +23,29 @@ class LadderGame(Game):
         if self.validity == ValidityState.VALID:
             new_ratings = self.compute_rating(RatingType.LADDER_1V1)
             await self.persist_rating_change_stats(new_ratings, RatingType.LADDER_1V1)
+            await self.update_division_scores()
+
+    async def update_division_scores(self):
+        scores = []
+        for player in self.players:
+            army = self.get_player_option(player.id, 'Army')
+            try:
+                scores.append(self.get_army_score(army))
+            except KeyError:
+                return
+
+        if scores[0] > scores[1]:
+            # first player won
+            await Leagues.calculate_new_divisions(self.players[0], 1)
+            await Leagues.calculate_new_divisions(self.players[1], -1)
+        elif scores[0] < scores[1]:
+            # second player won
+            await Leagues.calculate_new_divisions(self.players[0], 1)
+            await Leagues.calculate_new_divisions(self.players[1], -1)
+        else:
+            # draw
+            await Leagues.calculate_new_divisions(self.players[0], 0)
+            await Leagues.calculate_new_divisions(self.players[1], 0)
 
     def is_winner(self, player: Player):
         return self.outcome(player) == GameOutcome.VICTORY

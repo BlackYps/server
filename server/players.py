@@ -28,6 +28,7 @@ class Player:
         session: int = 0,
         player_id: int = 0,
         ratings=None,
+        leagues=None,
         clan=None,
         game_count=None,
         permission_group: int = 0,
@@ -44,6 +45,13 @@ class Player:
         self.ratings = PlayerRatings(default=(1500, 500))
         if ratings is not None:
             self.ratings.update(ratings)
+
+        self.leagues = (0, 0, 0)
+        """
+        division, score, game count
+        """
+        if leagues is not None:
+            self.leagues.update(leagues)
 
         self.game_count = RatingTypeMap(0)
         if game_count is not None:
@@ -142,6 +150,7 @@ class Player:
                     ('login', self.login),
                     ('global_rating', self.ratings[RatingType.GLOBAL]),
                     ('ladder_rating', self.ratings[RatingType.LADDER_1V1]),
+                    ('leagues', self.leagues),
                     ('number_of_games', self.game_count[RatingType.GLOBAL]),
                     ('avatar', self.avatar),
                     ('country', self.country),
