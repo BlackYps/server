@@ -73,7 +73,7 @@ class PlayerService:
                 login
                 .join(global_rating)
                 .join(ladder1v1_rating)
-                .join(ladder1v1_leagues)
+                .outerjoin(ladder1v1_leagues)
                 .outerjoin(clan_membership)
                 .outerjoin(clan)
                 .outerjoin(avatars, onclause=and_(
@@ -100,7 +100,7 @@ class PlayerService:
             )
             player.game_count[RatingType.LADDER_1V1] = row[ladder1v1_rating.c.numGames]  # not in dictionary?
 
-            player.leagues = (
+            player.league = (
                 row[ladder1v1_leagues.c.division],
                 row[ladder1v1_leagues.c.score],
                 row[ladder1v1_leagues.c.numGames]
