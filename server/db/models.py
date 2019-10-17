@@ -145,13 +145,13 @@ ladder1v1_rating = Table(
     Column('is_active',     Boolean,    nullable=False)
 )
 
-ladder1v1_leagues = Table(
+ladder_division_score = Table(
     'ladder1v1_division', metadata,
     Column('id',            Integer,    ForeignKey('login.id'), primary_key=True),
     Column('season',        Integer),
-    Column('division',      Integer),
+    Column('league',      Integer),
     Column('score',         Integer),
-    Column('numGames',         Integer)
+    Column('games',      Integer)
 )
 
 moderation_report = Table(
